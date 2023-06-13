@@ -513,7 +513,7 @@ function reset() {
 }
 
 function pop_out() {
-  window.open(window.location.href, "_blank", "width=800,height=600");
+  window.open(window.location.href, "_blank", "width=600,height=750");
 }
 
 function open_github() {
