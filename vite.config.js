@@ -17,7 +17,12 @@ export default defineConfig({
       autoImport: true,
     }),
   ],
-  define: { "process.env": {} },
+  define: {
+    "process.env": {
+      VITE_API_DEV: process.env.VITE_API_DEV,
+      VITE_API_PROD: process.env.VITE_API_PROD,
+    },
+  },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
