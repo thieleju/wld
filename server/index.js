@@ -20,6 +20,7 @@ app.use(express.json());
 // import routes
 app.use("/wld_chess_com", require("./routes/wld_chess_com.js"));
 app.use("/wld_lichess", require("./routes/wld_lichess.js"));
+// app.use("/scrape", require("./routes/scrape.js"));
 
 // fallback route
 app.get("*", (req, res) => {
