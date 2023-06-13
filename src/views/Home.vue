@@ -42,20 +42,30 @@
             <!-- PLATFORM V SWITCH -->
             <v-col cols="4">
               <v-switch
-                color="primary"
                 v-model="platform.chess_com"
+                color="primary"
+                readonly
                 :label="platform.label"
-                :items="platform.items"
+                :items="platform_items"
               ></v-switch>
             </v-col>
             <!-- GAME SETTINGS -->
-            <v-col cols="12">
+            <v-col cols="6">
               <v-autocomplete
                 v-model="game_settings.mode"
-                label="Game Mode(s)"
+                label="Game Modes"
                 multiple
                 prepend-icon="mdi-lightning-bolt"
-                :items="game_settings.modes"
+                :items="game_settings_items"
+                @update:modelValue="update_data"
+              ></v-autocomplete>
+            </v-col>
+            <v-col cols="6">
+              <v-autocomplete
+                v-model="game_settings.time_interval"
+                label="WLD Interval"
+                prepend-icon="mdi-clock-outline"
+                :items="game_settings_time_intervals"
                 @update:modelValue="update_data"
               ></v-autocomplete>
             </v-col>
@@ -121,6 +131,17 @@
     </v-col>
   </v-row>
 
+  <!-- SNACKBAR -->
+  <v-snackbar
+    v-model="snackbar"
+    :timeout="1500"
+    variant="outlined"
+    color="primary"
+  >
+    <v-icon left>mdi-check-circle-outline</v-icon>
+    {{ snackbar_text }}
+  </v-snackbar>
+
   <!-- color picker -->
   <!-- <ColorPicker color="#ffffff" @save="save_color"></ColorPicker> -->
 </template>
@@ -138,12 +159,11 @@ const default_settings = {
   platform_chess_com: true,
   platform: {
     chess_com: true,
-    items: ["chess.com", "lichess.org"],
     label: "chess.com",
   },
   game_settings: {
-    modes: ["blitz", "rapid", "bullet", "daily"],
-    mode: "rapid",
+    mode: ["rapid", "blitz"],
+    time_interval: "last 24 hours",
   },
   api: {
     loading: false,
@@ -167,6 +187,17 @@ const api = ref(default_settings.api);
 const wld = ref(default_settings.wld);
 const game_settings = ref(default_settings.game_settings);
 
+const platform_items = ref(["chess.com", "lichess.org"]);
+const game_settings_items = ref(["blitz", "rapid", "bullet", "daily"]);
+const game_settings_time_intervals = ref([
+  "last 1 hour",
+  "last 6 hours",
+  "last 12 hours",
+  "last 24 hours",
+  "today",
+  "this month",
+]);
+
 const fontOptions = [
   "Arial",
   "Verdana",
@@ -183,6 +214,10 @@ const fontOptions = [
   "Palatino Linotype",
 ];
 
+const update_interval = ref(10000);
+const snackbar = ref(false);
+const snackbar_text = ref("");
+
 onMounted(() => {
   read_settings();
   update_data();
@@ -190,33 +225,43 @@ onMounted(() => {
   // set update interval to 10 seconds
   setInterval(() => {
     update_data();
-  }, 10000);
+  }, update_interval.value);
 });
 
 watch(
   () => platform.value.chess_com,
   (val) => {
-    if (val) platform.value.label = platform.value.items[0];
-    else platform.value.label = platform.value.items[1];
+    if (val) platform.value.label = platform_items.value[0];
+    else platform.value.label = platform_items.value[1];
+    update_data();
   }
 );
 
 async function update_data() {
+  if (!username.value) return;
+
   api.value.loading = true;
   try {
     await get_data(username.value);
     api.value.hint = `Showing WLD for ${username.value}`;
   } catch (error) {
-    // console.log(error);
+    console.log(error);
     api.value.hint = `Failed to fetch WLD`;
   } finally {
     api.value.loading = false;
+    // update page title
+    document.title = `${wld.value.wins}/${wld.value.loses}/${wld.value.draws} - WLD`;
   }
 }
 
 async function get_data(un) {
-  if (platform.value.chess_com) return get_chess_com_data(un);
-  else return get_lichess_data(un);
+  if (!un) return;
+  let stats = {};
+  if (platform.value.chess_com) stats = await get_chess_com_data(un);
+  else return (stats = await get_lichess_data(un));
+
+  // update wld
+  wld.value = stats;
 }
 
 async function get_chess_com_data(un) {
@@ -232,18 +277,22 @@ async function get_chess_com_data(un) {
   );
 
   // filter games depending on date and mode
-  const current_date = Math.floor(Date.now() / 1000);
-  const games = res.data.games.filter(
-    (game) =>
-      // filter game mode
-      (Array.isArray(game_settings.value.mode)
-        ? game_settings.value.mode.includes(game.time_class)
-        : game.time_class == game_settings.value.mode) &&
-      // filter games that are not finished
-      game.end_time < current_date &&
-      // filter games that are not in the last 12 hours
-      game.end_time > current_date - 43200 // 12 hours in seconds
-  );
+  const games = res.data.games.filter((game) => {
+    // filter game mode and time interval
+    if (
+      Array.isArray(game_settings.value.mode) &&
+      game_settings.value.mode.includes(game.time_class) &&
+      check_time_interval(game.end_time)
+    )
+      return true;
+
+    if (
+      game.time_class == game_settings.value.mode &&
+      check_time_interval(game.end_time)
+    )
+      return true;
+    else return false;
+  });
   let stats = {
     wins: 0,
     loses: 0,
@@ -270,9 +319,45 @@ async function get_chess_com_data(un) {
         console.log(`Unknown result: ${game[color].result}`);
     }
   });
-  // update wld if it changed
-  // if (wld.value.wins != stats.wins)
-  wld.value = stats;
+  return stats;
+}
+
+function check_time_interval(end_time) {
+  const current_date = Math.floor(Date.now() / 1000);
+  // filter games that are not finished
+  if (end_time > current_date) return false;
+  // filter games depending on time interval
+  switch (game_settings.value.time_interval) {
+    case "last 1 hour":
+      if (end_time > current_date - 3600) return true;
+      else return false;
+      break;
+    case "last 6 hours":
+      if (end_time > current_date - 21600) return true;
+      else return false;
+      break;
+    case "last 12 hours":
+      if (end_time > current_date - 43200) return true;
+      else return false;
+      break;
+    case "last 24 hours":
+      if (end_time > current_date - 86400) return true;
+      else return false;
+      break;
+    case "today":
+      // get current amount of seconds of current day
+      const current_day = new Date();
+      const current_day_seconds =
+        current_day.getHours() * 3600 +
+        current_day.getMinutes() * 60 +
+        current_day.getSeconds();
+      if (end_time > current_date - current_day_seconds) return true;
+      else return false;
+    case "this month":
+      return true;
+    default:
+      return false;
+  }
 }
 
 function transform_result(result) {
@@ -304,9 +389,63 @@ function transform_result(result) {
 }
 
 async function get_lichess_data(un) {
-  const res = await axios.get(`https://lichess.org/api/user/${un}`);
-  console.log(res.data);
-  return res.data;
+  const since = 1356998400070;
+  const res = await axios.get(
+    `https://lichess.org/api/games/user/${un}?since=${since}&max=10&moves=false`,
+    {
+      headers: {
+        Accept: "application/x-ndjson",
+      },
+    }
+  );
+
+  // parse input
+  const parsed = parseInput(res.data);
+
+  console.log(parsed);
+
+  let stats = {
+    wins: 0,
+    loses: 0,
+    draws: 0,
+  };
+
+  return stats;
+}
+
+function parseInput(input) {
+  const lines = input.trim().split("\n");
+  const result = [];
+
+  for (const line of lines) {
+    try {
+      const obj = JSON.parse(line);
+      result.push(obj);
+    } catch (error) {
+      console.error(`Error parsing line: ${line}`);
+    }
+  }
+  return result;
+}
+
+function get_time_interval_lichess() {
+  switch (game_settings.value.time_interval) {
+    case "last 1 hour":
+      break;
+    case "last 6 hours":
+      break;
+    case "last 12 hours":
+      break;
+    case "last 24 hours":
+      break;
+    case "today":
+    // get current amount of seconds of current day
+
+    case "this month":
+
+    default:
+      return false;
+  }
 }
 
 function read_settings() {
@@ -322,6 +461,10 @@ function read_settings() {
     platform.value = settings.platform;
     wld.value = settings.wld;
     game_settings.value = settings.game_settings;
+
+    // show snackbar
+    snackbar.value = true;
+    snackbar_text.value = "Settings loaded";
   }
 }
 
@@ -339,6 +482,10 @@ function save_settings() {
   };
   console.log("⚡ Saved settings to local storage", settings);
   localStorage.setItem("settings", JSON.stringify(settings));
+
+  // show snackbar
+  snackbar.value = true;
+  snackbar_text.value = "Settings saved";
 }
 
 function reset() {
@@ -351,10 +498,13 @@ function reset() {
   api.value = default_settings.api;
   api.value.hint = "Enter the username of a player";
   wld.value = default_settings.wld;
-}
+  game_settings.value.time_interval =
+    default_settings.game_settings.time_interval;
+  game_settings.value.mode = default_settings.game_settings.mode;
 
-function save_color(color) {
-  console.log(color);
+  // show snackbar
+  snackbar.value = true;
+  snackbar_text.value = "Reset settings";
 }
 
 function pop_out() {
