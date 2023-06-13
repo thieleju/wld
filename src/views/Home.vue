@@ -17,101 +17,113 @@
 
     <v-col lg="5" md="8" sm="12" xs="12">
       <v-card class="mx-3">
-        <!-- <v-progress-linear
-          v-if="api.loading"
-          color="primary"
-          indeterminate
-        ></v-progress-linear> -->
-        <!-- set background color to primary color -->
-        <!-- <v-card-title class="primary background">Settings</v-card-title> -->
-        <!-- <v-divider></v-divider> -->
+        <v-tabs v-model="tabs" color="primary" align-tabs="center" grow>
+          <v-tab value="0">user</v-tab>
+          <v-tab value="1">opponent</v-tab>
+        </v-tabs>
+        <v-divider></v-divider>
         <v-card-text>
-          <v-row>
-            <!-- USERNAME -->
-            <v-col cols="8">
-              <v-text-field
-                v-model="username"
-                label="Username"
-                persistent-hint
-                prepend-icon="mdi-account"
-                :hint="api.hint"
-                :loading="api.loading"
-                @input="update_data"
-              ></v-text-field>
-            </v-col>
-            <!-- PLATFORM V SWITCH -->
-            <v-col cols="4">
-              <v-switch
-                v-model="platform.chess_com"
-                color="primary"
-                readonly
-                :label="platform.label"
-                :items="platform_items"
-              ></v-switch>
-            </v-col>
-            <!-- GAME SETTINGS -->
-            <v-col cols="6">
-              <v-autocomplete
-                v-model="game_settings.mode"
-                label="Game Modes"
-                multiple
-                prepend-icon="mdi-lightning-bolt"
-                :items="game_settings_items"
-                @update:modelValue="update_data"
-              ></v-autocomplete>
-            </v-col>
-            <v-col cols="6">
-              <v-autocomplete
-                v-model="game_settings.time_interval"
-                label="WLD Interval"
-                prepend-icon="mdi-clock-outline"
-                :items="game_settings_time_intervals"
-                @update:modelValue="update_data"
-              ></v-autocomplete>
-            </v-col>
-            <!-- FONT -->
-            <v-col cols="6">
-              <v-select
-                v-model="selectedFont"
-                :items="fontOptions"
-                label="Font"
-                prepend-icon="mdi-format-font"
-              ></v-select>
-            </v-col>
-            <!-- FONT SIZE -->
-            <v-col cols="6">
-              <v-text-field
-                v-model.number="selectedSize"
-                label="Font size"
-                type="number"
-                prepend-icon="mdi-format-size"
-              ></v-text-field>
-            </v-col>
-            <!-- COLOR BACKGROUND -->
-            <v-col cols="6">
-              <v-text-field
-                v-model="background_color"
-                label="Background Color"
-                type="color"
-                mode="hexa"
-                hide-details
-                prepend-icon="mdi-format-color-fill"
-              >
-              </v-text-field>
-            </v-col>
-            <!-- COLOR FONT -->
-            <v-col cols="6">
-              <v-text-field
-                v-model="font_color"
-                label="Font Color"
-                type="color"
-                mode="hexa"
-                hide-details
-                prepend-icon="mdi-format-color-text"
-              >
-              </v-text-field>
-            </v-col>
-          </v-row>
+          <v-window v-model="tabs">
+            <v-window-item value="0">
+              <v-row>
+                <!-- USERNAME -->
+                <v-col cols="8">
+                  <v-text-field
+                    v-model="username"
+                    label="Username"
+                    persistent-hint
+                    prepend-icon="mdi-account"
+                    :hint="api.hint"
+                    :loading="api.loading"
+                    @input="get_data"
+                  ></v-text-field>
+                </v-col>
+                <!-- PLATFORM V SWITCH -->
+                <v-col cols="4">
+                  <v-switch
+                    v-model="platform.chess_com"
+                    color="primary"
+                    :label="platform.label"
+                    :items="platform_items"
+                  ></v-switch>
+                </v-col>
+                <!-- GAME SETTINGS -->
+                <v-col cols="6">
+                  <v-autocomplete
+                    v-model="game_settings.mode"
+                    label="Game Modes"
+                    multiple
+                    prepend-icon="mdi-lightning-bolt"
+                    :items="game_settings_items"
+                    @update:modelValue="get_data"
+                  ></v-autocomplete>
+                </v-col>
+                <v-col cols="6">
+                  <v-autocomplete
+                    v-model="game_settings.time_interval"
+                    label="WLD Interval"
+                    prepend-icon="mdi-clock-outline"
+                    :items="game_settings_time_intervals"
+                    @update:modelValue="get_data"
+                  ></v-autocomplete>
+                </v-col>
+                <!-- FONT -->
+                <v-col cols="6">
+                  <v-select
+                    v-model="selectedFont"
+                    :items="fontOptions"
+                    label="Font"
+                    prepend-icon="mdi-format-font"
+                  ></v-select>
+                </v-col>
+                <!-- FONT SIZE -->
+                <v-col cols="6">
+                  <v-text-field
+                    v-model.number="selectedSize"
+                    label="Font size"
+                    type="number"
+                    prepend-icon="mdi-format-size"
+                  ></v-text-field>
+                </v-col>
+                <!-- COLOR BACKGROUND -->
+                <v-col cols="6">
+                  <v-text-field
+                    v-model="background_color"
+                    label="Background Color"
+                    type="color"
+                    mode="hexa"
+                    hide-details
+                    prepend-icon="mdi-format-color-fill"
+                  >
+                  </v-text-field>
+                </v-col>
+                <!-- COLOR FONT -->
+                <v-col cols="6">
+                  <v-text-field
+                    v-model="font_color"
+                    label="Font Color"
+                    type="color"
+                    mode="hexa"
+                    hide-details
+                    prepend-icon="mdi-format-color-text"
+                  >
+                  </v-text-field>
+                </v-col>
+              </v-row>
+            </v-window-item>
+            <v-window-item value="1">
+              <p class="text-h3 text-center">Coming soon</p>
+              <v-col cols="12">
+                <v-text-field
+                  v-model="opponent_username"
+                  label="Username"
+                  persistent-hint
+                  prepend-icon="mdi-account"
+                  @input="update_data_opponent"
+                ></v-text-field>
+              </v-col>
+            </v-window-item>
+          </v-window>
         </v-card-text>
         <v-card-actions class="my-2">
           <v-btn color="primary" @click="open_github">
@@ -146,15 +158,11 @@
     <v-icon left>mdi-check-circle-outline</v-icon>
     {{ snackbar_text }}
   </v-snackbar>
-
-  <!-- color picker -->
-  <!-- <ColorPicker color="#ffffff" @save="save_color"></ColorPicker> -->
 </template>
 
 <script setup>
 import { ref, watch, onMounted } from "vue";
-import axios from "axios";
-// import ColorPicker from "@/components/ColorPicker.vue";
+import axios from "../plugins/axios";
 
 const default_settings = {
   font: "Arial",
@@ -181,6 +189,10 @@ const default_settings = {
     draws: 0,
   },
 };
+
+const tabs = ref(null);
+
+const opponent_username = ref("");
 
 const selectedFont = ref(default_settings.font);
 const selectedSize = ref(default_settings.size);
@@ -225,11 +237,11 @@ const snackbar_text = ref("");
 
 onMounted(() => {
   read_settings();
-  update_data();
+  get_data();
 
   // set update interval to 10 seconds
   setInterval(() => {
-    update_data();
+    get_data();
   }, update_interval.value);
 });
 
@@ -237,219 +249,78 @@ watch(
   () => platform.value.chess_com,
   (val) => {
     if (val) platform.value.label = platform_items.value[0];
-    else platform.value.label = platform_items.value[1];
-    update_data();
+    else {
+      platform.value.label = platform_items.value[1];
+
+      //show snackbar info
+      snackbar.value = true;
+      snackbar_text.value = "Lichess is username case sensitive!";
+    }
+    get_data();
   }
 );
 
-async function update_data() {
-  if (!username.value) return;
+watch(
+  () => username.value,
+  (val) => {
+    if (val.length == 0) {
+      wld.value = default_settings.wld;
+      api.value.hint = "Enter the username of a player";
+    }
+  }
+);
+
+async function update_data_opponent() {
+  // get current live game of opponent_username
+  if (!opponent_username.value) return;
+}
+
+async function get_data() {
+  if (username.value.length == 0) return;
 
   api.value.loading = true;
+  api.value.hint = `Fetching WLD...`;
+
+  let res = {};
   try {
-    await get_data(username.value);
-    api.value.hint = `Showing WLD for ${username.value}`;
-  } catch (error) {
-    console.log(error);
-    api.value.hint = `Failed to fetch WLD`;
+    if (platform.value.chess_com) {
+      // get wld from chess.com
+      res = await axios.post("/wld_chess_com", {
+        username: username.value,
+        game_mode: game_settings.value.mode,
+        time_interval: game_settings.value.time_interval,
+      });
+    } else {
+      // get wld from lichess
+      res = await axios.post("/wld_lichess", {
+        username: username.value,
+        game_mode: game_settings.value.mode,
+        time_interval: game_settings.value.time_interval,
+      });
+    }
+
+    // check if response was successful
+    if (res.data.status == "success") {
+      wld.value = res.data.stats;
+      api.value.hint = `Showing WLD for ${username.value}`;
+    } else {
+      api.value.hint = `Could not find user ${username.value}`;
+      wld.value = {
+        wins: 0,
+        loses: 0,
+        draws: 0,
+      };
+    }
+  } catch (err) {
+    api.value.hint = `Error fetching WLD for ${username.value}`;
+    wld.value = {
+      wins: 0,
+      loses: 0,
+      draws: 0,
+    };
   } finally {
-    api.value.loading = false;
-    // update page title
     document.title = `${wld.value.wins}/${wld.value.loses}/${wld.value.draws} - WLD`;
-  }
-}
-
-async function get_data(un) {
-  if (!un) return;
-  let stats = {};
-  if (platform.value.chess_com) stats = await get_chess_com_data(un);
-  else return (stats = await get_lichess_data(un));
-
-  // update wld
-  wld.value = stats;
-}
-
-async function get_chess_com_data(un) {
-  // current year and month
-  const date = new Date();
-  const year = date.getFullYear();
-  let month = date.getMonth() + 1;
-  // add 0 to month if less than 10
-  if (month < 10) month = `0${month}`;
-
-  const res = await axios.get(
-    `https://api.chess.com/pub/player/${un}/games/${year}/${month}`
-  );
-
-  // filter games depending on date and mode
-  const games = res.data.games.filter((game) => {
-    // filter game mode and time interval
-    if (
-      Array.isArray(game_settings.value.mode) &&
-      game_settings.value.mode.includes(game.time_class) &&
-      check_time_interval(game.end_time)
-    )
-      return true;
-
-    if (
-      game.time_class == game_settings.value.mode &&
-      check_time_interval(game.end_time)
-    )
-      return true;
-    else return false;
-  });
-  let stats = {
-    wins: 0,
-    loses: 0,
-    draws: 0,
-  };
-  games.forEach((game) => {
-    // get which side the player is playing on
-    let color = "";
-    if (game.white.username.toLowerCase() === un.toLowerCase()) color = "white";
-    else color = "black";
-    // get the result
-    const result = transform_result(game[color].result);
-    switch (result) {
-      case "win":
-        stats.wins++;
-        break;
-      case "lose":
-        stats.loses++;
-        break;
-      case "draw":
-        stats.draws++;
-        break;
-      default:
-        console.log(`Unknown result: ${game[color].result}`);
-    }
-  });
-  return stats;
-}
-
-function check_time_interval(end_time) {
-  const current_date = Math.floor(Date.now() / 1000);
-  // filter games that are not finished
-  if (end_time > current_date) return false;
-  // filter games depending on time interval
-  switch (game_settings.value.time_interval) {
-    case "last 1 hour":
-      if (end_time > current_date - 3600) return true;
-      else return false;
-      break;
-    case "last 6 hours":
-      if (end_time > current_date - 21600) return true;
-      else return false;
-      break;
-    case "last 12 hours":
-      if (end_time > current_date - 43200) return true;
-      else return false;
-      break;
-    case "last 24 hours":
-      if (end_time > current_date - 86400) return true;
-      else return false;
-      break;
-    case "today":
-      // get current amount of seconds of current day
-      const current_day = new Date();
-      const current_day_seconds =
-        current_day.getHours() * 3600 +
-        current_day.getMinutes() * 60 +
-        current_day.getSeconds();
-      if (end_time > current_date - current_day_seconds) return true;
-      else return false;
-    case "this month":
-      return true;
-    default:
-      return false;
-  }
-}
-
-function transform_result(result) {
-  let r = "";
-  switch (result) {
-    case "win":
-      r = "win";
-      break;
-    case "lose":
-    case "checkmated":
-    case "resigned":
-    case "timeout":
-    case "abandoned":
-    case "bughousepartnerlose":
-      r = "lose";
-      break;
-    case "agreed":
-    case "timevsinsufficient":
-    case "repetition":
-    case "stalemate":
-    case "insufficient":
-    case "50move":
-      r = "draw";
-      break;
-    default:
-      console.log(`Cannot transform unknown result: ${result}`);
-  }
-  return r;
-}
-
-async function get_lichess_data(un) {
-  const since = 1356998400070;
-  const res = await axios.get(
-    `https://lichess.org/api/games/user/${un}?since=${since}&max=10&moves=false`,
-    {
-      headers: {
-        Accept: "application/x-ndjson",
-      },
-    }
-  );
-
-  // parse input
-  const parsed = parseInput(res.data);
-
-  console.log(parsed);
-
-  let stats = {
-    wins: 0,
-    loses: 0,
-    draws: 0,
-  };
-
-  return stats;
-}
-
-function parseInput(input) {
-  const lines = input.trim().split("\n");
-  const result = [];
-
-  for (const line of lines) {
-    try {
-      const obj = JSON.parse(line);
-      result.push(obj);
-    } catch (error) {
-      console.error(`Error parsing line: ${line}`);
-    }
-  }
-  return result;
-}
-
-function get_time_interval_lichess() {
-  switch (game_settings.value.time_interval) {
-    case "last 1 hour":
-      break;
-    case "last 6 hours":
-      break;
-    case "last 12 hours":
-      break;
-    case "last 24 hours":
-      break;
-    case "today":
-    // get current amount of seconds of current day
-
-    case "this month":
-
-    default:
-      return false;
+    api.value.loading = false;
   }
 }
 
