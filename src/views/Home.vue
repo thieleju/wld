@@ -514,6 +514,8 @@ function reset() {
 
 function pop_out() {
   window.open(window.location.href, "_blank", "width=600,height=750");
+  // close current tab
+  window.close();
 }
 
 function open_github() {
