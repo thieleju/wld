@@ -114,6 +114,11 @@
           </v-row>
         </v-card-text>
         <v-card-actions class="my-2">
+          <v-btn color="primary" @click="open_github">
+            <v-icon class="px-3">mdi-github </v-icon>
+            GitHub</v-btn
+          >
+          <v-spacer></v-spacer>
           <v-btn color="primary" @click="reset">
             <v-icon class="px-3">mdi-restore </v-icon>
             reset</v-btn
@@ -509,6 +514,10 @@ function reset() {
 
 function pop_out() {
   window.open(window.location.href, "_blank", "width=800,height=600");
+}
+
+function open_github() {
+  window.open("https://github.com/thieleju/wld", "_blank");
 }
 </script>
 
