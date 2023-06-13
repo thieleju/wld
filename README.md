@@ -11,7 +11,3 @@
 Win / Lose / Draw Statistics of Chess Profiles
 
 ![Preview](./preview.png)
-
-## Coming soon
-
-- lichess support

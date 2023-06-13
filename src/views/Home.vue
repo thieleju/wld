@@ -17,102 +17,103 @@
 
     <v-col lg="5" md="8" sm="12" xs="12">
       <v-card class="mx-3">
-        <v-tabs v-model="tabs" color="primary" align-tabs="center" grow>
+        <!-- <v-btn @click="scrape">scrape</v-btn> -->
+        <!-- <v-tabs v-model="tabs" color="primary" align-tabs="center" grow>
           <v-tab value="0">user</v-tab>
           <v-tab value="1">opponent</v-tab>
         </v-tabs>
-        <v-divider></v-divider>
+        <v-divider></v-divider> -->
         <v-card-text>
-          <v-window v-model="tabs">
-            <v-window-item value="0">
-              <v-row>
-                <!-- USERNAME -->
-                <v-col cols="8">
-                  <v-text-field
-                    v-model="username"
-                    label="Username"
-                    persistent-hint
-                    prepend-icon="mdi-account"
-                    :hint="api.hint"
-                    :loading="api.loading"
-                    @input="get_data"
-                  ></v-text-field>
-                </v-col>
-                <!-- PLATFORM V SWITCH -->
-                <v-col cols="4">
-                  <v-switch
-                    v-model="platform.chess_com"
-                    color="primary"
-                    :label="platform.label"
-                    :items="platform_items"
-                  ></v-switch>
-                </v-col>
-                <!-- GAME SETTINGS -->
-                <v-col cols="6">
-                  <v-autocomplete
-                    v-model="game_settings.mode"
-                    label="Game Modes"
-                    multiple
-                    prepend-icon="mdi-lightning-bolt"
-                    :items="game_settings_items"
-                    @update:modelValue="get_data"
-                  ></v-autocomplete>
-                </v-col>
-                <v-col cols="6">
-                  <v-autocomplete
-                    v-model="game_settings.time_interval"
-                    label="WLD Interval"
-                    prepend-icon="mdi-clock-outline"
-                    :items="game_settings_time_intervals"
-                    @update:modelValue="get_data"
-                  ></v-autocomplete>
-                </v-col>
-                <!-- FONT -->
-                <v-col cols="6">
-                  <v-select
-                    v-model="selectedFont"
-                    :items="fontOptions"
-                    label="Font"
-                    prepend-icon="mdi-format-font"
-                  ></v-select>
-                </v-col>
-                <!-- FONT SIZE -->
-                <v-col cols="6">
-                  <v-text-field
-                    v-model.number="selectedSize"
-                    label="Font size"
-                    type="number"
-                    prepend-icon="mdi-format-size"
-                  ></v-text-field>
-                </v-col>
-                <!-- COLOR BACKGROUND -->
-                <v-col cols="6">
-                  <v-text-field
-                    v-model="background_color"
-                    label="Background Color"
-                    type="color"
-                    mode="hexa"
-                    hide-details
-                    prepend-icon="mdi-format-color-fill"
-                  >
-                  </v-text-field>
-                </v-col>
-                <!-- COLOR FONT -->
-                <v-col cols="6">
-                  <v-text-field
-                    v-model="font_color"
-                    label="Font Color"
-                    type="color"
-                    mode="hexa"
-                    hide-details
-                    prepend-icon="mdi-format-color-text"
-                  >
-                  </v-text-field>
-                </v-col>
-              </v-row>
-            </v-window-item>
-            <v-window-item value="1">
-              <p class="text-h3 text-center">Coming soon</p>
+          <!-- <v-window v-model="tabs"> -->
+          <!-- <v-window-item value="0"> -->
+          <v-row>
+            <!-- USERNAME -->
+            <v-col cols="8">
+              <v-text-field
+                v-model="username"
+                label="Username"
+                persistent-hint
+                prepend-icon="mdi-account"
+                :hint="api.hint"
+                :loading="api.loading"
+                @input="get_data"
+              ></v-text-field>
+            </v-col>
+            <!-- PLATFORM V SWITCH -->
+            <v-col cols="4">
+              <v-switch
+                v-model="platform.chess_com"
+                color="primary"
+                :label="platform.label"
+                :items="platform_items"
+              ></v-switch>
+            </v-col>
+            <!-- GAME SETTINGS -->
+            <v-col cols="6">
+              <v-autocomplete
+                v-model="game_settings.mode"
+                label="Game Modes"
+                multiple
+                prepend-icon="mdi-lightning-bolt"
+                :items="game_settings_items"
+                @update:modelValue="get_data"
+              ></v-autocomplete>
+            </v-col>
+            <v-col cols="6">
+              <v-autocomplete
+                v-model="game_settings.time_interval"
+                label="WLD Interval"
+                prepend-icon="mdi-clock-outline"
+                :items="game_settings_time_intervals"
+                @update:modelValue="get_data"
+              ></v-autocomplete>
+            </v-col>
+            <!-- FONT -->
+            <v-col cols="6">
+              <v-select
+                v-model="selectedFont"
+                :items="fontOptions"
+                label="Font"
+                prepend-icon="mdi-format-font"
+              ></v-select>
+            </v-col>
+            <!-- FONT SIZE -->
+            <v-col cols="6">
+              <v-text-field
+                v-model.number="selectedSize"
+                label="Font size"
+                type="number"
+                prepend-icon="mdi-format-size"
+              ></v-text-field>
+            </v-col>
+            <!-- COLOR BACKGROUND -->
+            <v-col cols="6">
+              <v-text-field
+                v-model="background_color"
+                label="Background Color"
+                type="color"
+                mode="hexa"
+                hide-details
+                prepend-icon="mdi-format-color-fill"
+              >
+              </v-text-field>
+            </v-col>
+            <!-- COLOR FONT -->
+            <v-col cols="6">
+              <v-text-field
+                v-model="font_color"
+                label="Font Color"
+                type="color"
+                mode="hexa"
+                hide-details
+                prepend-icon="mdi-format-color-text"
+              >
+              </v-text-field>
+            </v-col>
+          </v-row>
+          <!-- </v-window-item> -->
+          <!-- <v-window-item value="1"> -->
+          <!-- <p class="text-h3 text-center">Coming soon</p>
               <v-col cols="12">
                 <v-text-field
                   v-model="opponent_username"
@@ -121,9 +122,9 @@
                   prepend-icon="mdi-account"
                   @input="update_data_opponent"
                 ></v-text-field>
-              </v-col>
-            </v-window-item>
-          </v-window>
+              </v-col> -->
+          <!-- </v-window-item>
+          </v-window> -->
         </v-card-text>
         <v-card-actions class="my-2">
           <v-btn color="primary" @click="open_github">
@@ -269,6 +270,14 @@ watch(
     }
   }
 );
+
+async function scrape() {
+  const res = await axios.post("/scrape", {
+    username: "Kugelbuch",
+    time_interval: "last 12 hours",
+  });
+  console.log(res.data);
+}
 
 async function update_data_opponent() {
   // get current live game of opponent_username
