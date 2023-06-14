@@ -12,7 +12,13 @@ const frontend_url =
     : process.env.FRONTEND_URL_PROD;
 
 // Enable CORS
-app.use(cors());
+app.use(
+  cors({
+    origin: frontend_url,
+    optionsSuccessStatus: 200,
+    methods: "POST",
+  })
+);
 
 // parse json
 app.use(express.json());
