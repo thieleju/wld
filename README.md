@@ -8,6 +8,6 @@
 </div>
 
 
-Win / Lose / Draw Statistics of Chess Profiles
+Win / Lose / Draw Stats for Chess Players
 
 ![Preview](./preview.png)
