@@ -31,9 +31,14 @@ router.post("/", async (req, res) => {
       `https://api.chess.com/pub/player/${username}/games/${year}/${month}`,
       {
         headers: {
-          "User-Agent": `wld.node5.de (username: ${user_agent_username}; contact:${user_agent_email})`,
+          "User-Agent": `wld.node5.de (username: ${user_agent_username}; contact: ${user_agent_email})`,
         },
       }
+    );
+
+    // log api request and user agent
+    console.log(
+      `GET https://api.chess.com/pub/player/${username}/games/${year}/${month} (username: ${user_agent_username}; contact: ${user_agent_email})`
     );
 
     // filter games depending on date and mode
