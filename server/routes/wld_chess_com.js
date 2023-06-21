@@ -19,8 +19,21 @@ router.post("/", async (req, res) => {
     let month = date.getMonth() + 1;
     if (month < 10) month = `0${month}`;
 
+    // Added user agent to chess.com api requests
+    // https://www.chess.com/announcements/view/breaking-change-user-agent-contact-info-required
+    const user_agent_username = process.env.CHESS_COM_USERNAME;
+    const user_agent_email = process.env.CHESS_COM_EMAIL;
+
+    if (!user_agent_username || !user_agent_email)
+      return res.status(500).json({ message: "User Agent Error!" });
+
     const response = await axios.get(
-      `https://api.chess.com/pub/player/${username}/games/${year}/${month}`
+      `https://api.chess.com/pub/player/${username}/games/${year}/${month}`,
+      {
+        headers: {
+          "User-Agent": `wld.node5.de (username: ${user_agent_username}; contact:${user_agent_email})`,
+        },
+      }
     );
 
     // filter games depending on date and mode
